@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t logger .
+
+      - name: Run Docker container
+        run: |
+          mkdir -p logs
+          printf 'text1\ntext2\ntext3\n' | docker run --rm -i -v "${{ github.workspace }}/logs:/home/logs" logger
+
+      - name: Check log output
+        run: |
+          test -f logs/log.txt
+          grep -q 'text1' logs/log.txt
+          grep -q 'text2' logs/log.txt
+          grep -q 'text3' logs/log.txt
+          cat logs/log.txt
