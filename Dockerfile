@@ -1,7 +1,5 @@
 FROM ubuntu:18.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       ca-certificates \
@@ -14,13 +12,16 @@ RUN apt-get update && \
 COPY . /print
 WORKDIR /print
 
-RUN cmake -S . -B _build \
+RUN mkdir -p _build && \
+    cd _build && \
+    cmake .. \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=/print/_install && \
-    cmake --build _build --config Release && \
-    cmake --build _build --config Release --target install
+    cmake --build . --config Release && \
+    cmake --build . --config Release --target install
 
 ENV LOG_PATH=/home/logs/log.txt
-VOLUME ["/home/logs"]
-WORKDIR /print/_install/bin
-ENTRYPOINT ["./demo"]
+
+VOLUME /home/logs
+
+ENTRYPOINT ["/print/_install/bin/demo"]
