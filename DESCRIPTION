@@ -1,0 +1,2 @@
+print is a small educational CMake project with formatter libraries, a solver application, unit tests and a demo application.
+The project demonstrates dependency management through the Hunter interface and package creation with CPack.
